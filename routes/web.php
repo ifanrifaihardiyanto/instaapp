@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,17 +19,29 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
+// Routing Login
 Route::get('/', function () {
-    return redirect()->route('login');
-});
-
-Route::get('/login', function () {
     return view('auth.login');
-})->name('login');
+})->name('login')->middleware('guest');
 
-Route::get('/register', function () {
+Route::post('login', [AuthController::class, 'login']);
+
+// Routing Register
+Route::get('register', function () {
     return view('auth.register');
-})->name('register');
+})->name('register')->middleware('guest');
+
+Route::post('register', [AuthController::class, 'register']);
+
+// Routing Logout
+Route::post('logout', function () {
+    Auth::logout();
+    return redirect()->route('login');
+})->name('logout');
+
+
+
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 
 Route::get('/feed', function () {
     return view('feed');

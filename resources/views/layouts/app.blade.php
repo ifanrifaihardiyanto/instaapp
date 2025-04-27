@@ -29,8 +29,13 @@
                                 <li>
                                     <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-800">Profile</a>
                                 </li>
+                                <!-- Logout Form -->
                                 <li>
-                                    <button onclick="logout()" class="block px-4 py-2 text-gray-800">Logout</button>
+                                    <form action="{{ route('logout') }}" method="POST"
+                                        class="block px-4 py-2 text-gray-800">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left">Logout</button>
+                                    </form>
                                 </li>
                             </ul>
                         </div>

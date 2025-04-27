@@ -5,9 +5,20 @@
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
 
-            <form id="loginForm">
-                <input type="email" placeholder="Email" class="w-full p-2 mb-4 border rounded" required>
-                <input type="password" placeholder="Password" class="w-full p-2 mb-4 border rounded" required>
+            <!-- Form Login -->
+            <form action="{{ url('login') }}" method="POST">
+                @csrf
+                <input type="email" name="email" placeholder="Email" class="w-full p-2 mb-4 border rounded"
+                    value="{{ old('email') }}" required>
+                @error('email')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
+
+                <input type="password" name="password" placeholder="Password" class="w-full p-2 mb-4 border rounded"
+                    required>
+                @error('password')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
 
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Login</button>
             </form>
@@ -17,12 +28,4 @@
             </p>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            localStorage.setItem('loggedIn', 'true');
-            window.location.href = "{{ route('feed') }}";
-        });
-    </script>
 @endsection

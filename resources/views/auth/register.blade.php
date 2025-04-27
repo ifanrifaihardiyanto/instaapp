@@ -1,31 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Register - InstaApp</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@section('content')
+    <div class="flex items-center justify-center h-screen bg-gray-100">
+        <div class="bg-white p-8 rounded shadow-md w-96">
+            <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
 
-<body class="flex items-center justify-center h-screen bg-gray-100">
+            <!-- Form Register -->
+            <form action="{{ url('register') }}" method="POST">
+                @csrf
+                <input type="text" name="name" placeholder="Name" class="w-full p-2 mb-4 border rounded"
+                    value="{{ old('name') }}" required>
+                @error('name')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
 
-    <div class="bg-white p-8 rounded shadow-md w-96">
-        <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+                <input type="email" name="email" placeholder="Email" class="w-full p-2 mb-4 border rounded"
+                    value="{{ old('email') }}" required>
+                @error('email')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
 
-        <form onsubmit="event.preventDefault(); alert('Dummy register!');">
-            <input type="text" placeholder="Name" class="w-full p-2 mb-4 border rounded" required>
-            <input type="email" placeholder="Email" class="w-full p-2 mb-4 border rounded" required>
-            <input type="password" placeholder="Password" class="w-full p-2 mb-4 border rounded" required>
-            <input type="password" placeholder="Confirm Password" class="w-full p-2 mb-4 border rounded" required>
+                <input type="password" name="password" placeholder="Password" class="w-full p-2 mb-4 border rounded"
+                    required>
+                @error('password')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
 
-            <button class="w-full bg-green-500 text-white p-2 rounded">Register</button>
-        </form>
+                <input type="password" name="password_confirmation" placeholder="Confirm Password"
+                    class="w-full p-2 mb-4 border rounded" required>
+                @error('password_confirmation')
+                    <div class="text-red-500 text-sm">{{ $message }}</div>
+                @enderror
 
-        <p class="text-center mt-4">
-            Already have an account? <a href="{{ route('login') }}" class="text-blue-500">Login</a>
-        </p>
+                <button type="submit" class="w-full bg-green-500 text-white p-2 rounded">Register</button>
+            </form>
+
+            <p class="text-center mt-4">
+                Already have an account? <a href="{{ route('login') }}" class="text-blue-500">Login</a>
+            </p>
+        </div>
     </div>
-
-</body>
-
-</html>
+@endsection
