@@ -52,6 +52,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
     // Comment
     Route::post('posts/{post}/comment', [CommentController::class, 'store'])->name('posts.comment');
+    Route::get('/posts/{post}/comment', [CommentController::class, 'fetchComments'])->name('posts.comments');
     // Profile
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
 });

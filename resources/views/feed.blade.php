@@ -24,6 +24,22 @@
     <div class="max-w-xl mx-auto">
         <!-- Posts Feed -->
         @foreach ($posts as $post)
+            <!-- Modal for Comments -->
+            <div id="comments-modal-{{ $post->id }}"
+                class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+                <div class="bg-white rounded-lg max-w-lg w-full p-4 relative">
+                    <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
+                        onclick="closeCommentsModal({{ $post->id }})">
+                        &times;
+                    </button>
+                    <h2 class="text-lg font-semibold mb-4">Komentar</h2>
+                    <div id="comments-list-{{ $post->id }}" class="space-y-2 max-h-[400px] overflow-y-auto">
+                        <!-- Comments will be loaded here -->
+                        <p class="text-center text-gray-500">Memuat komentar...</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white border border-gray-200 rounded mb-6">
                 <!-- Post Header -->
                 <div class="flex items-center justify-between p-3 border-b border-gray-200">
@@ -71,7 +87,9 @@
 
                     <!-- View all comments -->
                     <div class="mt-1">
-                        <button class="text-gray-500 text-sm">Lihat semua {{ count($post->comments) }} komentar</button>
+                        <button class="text-gray-500 text-sm" onclick="openCommentsModal({{ $post->id }})">
+                            Lihat semua {{ count($post->comments) }} komentar
+                        </button>
                     </div>
 
                     <!-- Comments preview -->
@@ -110,6 +128,44 @@
     <script>
         // Initialize feather icons
         feather.replace();
+
+        function openCommentsModal(postId) {
+            const modal = document.getElementById(`comments-modal-${postId}`);
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+
+            // Show modal
+            modal.classList.remove('hidden');
+
+            // Clear previous
+            commentsList.innerHTML = '<p class="text-center text-gray-500">Memuat komentar...</p>';
+
+            // Fetch comments
+            fetch(`/posts/${postId}/comment`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.comments.length > 0) {
+                        commentsList.innerHTML = '';
+                        data.comments.forEach(comment => {
+                            const commentElement = document.createElement('div');
+                            commentElement.className = 'text-sm';
+                            commentElement.innerHTML =
+                                `<span class="font-semibold">${comment.user}</span> ${comment.content}`;
+                            commentsList.appendChild(commentElement);
+                        });
+                    } else {
+                        commentsList.innerHTML = '<p class="text-center text-gray-500">Belum ada komentar.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading comments:', error);
+                    commentsList.innerHTML = '<p class="text-center text-red-500">Gagal memuat komentar.</p>';
+                });
+        }
+
+        function closeCommentsModal(postId) {
+            const modal = document.getElementById(`comments-modal-${postId}`);
+            modal.classList.add('hidden');
+        }
 
         // Enable or disable comment button based on input
         document.querySelectorAll('.comment-text').forEach(input => {

@@ -29,4 +29,19 @@ class CommentController extends Controller
             ],
         ]);
     }
+
+    public function fetchComments(Post $post)
+    {
+        $comments = $post->comments()->with('user')->orderBy('created_at', 'asc')->get();
+
+        return response()->json([
+            'comments' => $comments->map(function ($comment) {
+                return [
+                    'user' => $comment->user->name,
+                    'content' => $comment->content,
+                    'created_at' => $comment->created_at->diffForHumans(),
+                ];
+            }),
+        ]);
+    }
 }
