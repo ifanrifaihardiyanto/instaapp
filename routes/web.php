@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,14 +42,17 @@ Route::post('logout', function () {
     return redirect()->route('login');
 })->name('logout');
 
-
-
-Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
-
-Route::get('/feed', function () {
-    return view('feed');
-})->name('feed');
-
-Route::get('/create-post', function () {
-    return view('post.create');
-})->name('post.create');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('posts', PostController::class);
+    // Feeds
+    Route::get('/feed', [PostController::class, 'index'])->name('feed');
+    // Create Post
+    Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
+    // Like or Unlike
+    Route::post('/posts/{post}/like', [LikeController::class, 'like'])->name('posts.like');
+    Route::post('/posts/{post}/unlike', [LikeController::class, 'unlike'])->name('posts.unlike');
+    // Comment
+    Route::post('posts/{post}/comment', [CommentController::class, 'store'])->name('posts.comment');
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+});

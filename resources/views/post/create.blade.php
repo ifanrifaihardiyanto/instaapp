@@ -5,13 +5,13 @@
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold mb-6 text-center">Create Post</h2>
 
-            <form id="postForm">
-                <textarea placeholder="What's on your mind?" class="w-full p-2 mb-4 border rounded" rows="4" required></textarea>
-
-                <input type="file" id="imageInput" class="w-full mb-4" accept="image/*">
-
+            <form id="postForm" method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+                @csrf
+                <input type="text" name="title" placeholder="Title" class="w-full p-2 mb-4 border rounded" required>
+                <textarea name="content" placeholder="What's on your mind?" class="w-full p-2 mb-4 border rounded" rows="4"
+                    required></textarea>
+                <input type="file" name="image" id="imageInput" class="w-full mb-4" accept="image/*">
                 <img id="previewImage" class="rounded mb-4 hidden" />
-
                 <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Post</button>
             </form>
         </div>
@@ -29,11 +29,6 @@
                 }
                 reader.readAsDataURL(file);
             }
-        });
-
-        document.getElementById('postForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Dummy post created!');
         });
     </script>
 @endsection
