@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
-    <div class="flex items-center justify-center h-screen">
+    <div class="flex items-center justify-center">
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
 

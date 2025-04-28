@@ -8,7 +8,7 @@
             }
 
             50% {
-                transform: scale(1.5);
+                transform: scale(1.2);
             }
 
             100% {
@@ -21,76 +21,123 @@
         }
     </style>
 
-    <div class="max-w-7xl mx-auto mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="max-w-xl mx-auto">
+        <!-- Posts Feed -->
         @foreach ($posts as $post)
-            <div class="bg-white p-4 rounded shadow mb-6">
-                <div class="flex items-center mb-3">
-                    <div class="bg-gray-300 w-10 h-10 rounded-full mr-3"></div>
-                    <h2 class="font-semibold">{{ $post->user->name }}</h2>
+            <div class="bg-white border border-gray-200 rounded mb-6">
+                <!-- Post Header -->
+                <div class="flex items-center justify-between p-3 border-b border-gray-200">
+                    <div class="flex items-center">
+                        <div class="bg-gray-300 w-8 h-8 rounded-full mr-3"></div>
+                        <span class="font-semibold text-sm">{{ $post->user->name }}</span>
+                    </div>
                 </div>
 
                 <!-- Post Image -->
                 @if ($post->image_path)
-                    <img src="{{ Storage::url($post->image_path) }}" alt="Post Image"
-                        class="w-full h-48 object-cover rounded mb-2">
+                    <img src="{{ Storage::url($post->image_path) }}" alt="Post Image" class="w-full object-cover"
+                        style="max-height: 600px;">
                 @else
-                    <img src="https://via.placeholder.com/600x400" alt="Post Image"
-                        class="w-full h-48 object-cover rounded mb-2">
+                    <img src="https://via.placeholder.com/600x600" alt="Post Image" class="w-full object-cover"
+                        style="max-height: 600px;">
                 @endif
 
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center space-x-4">
-                        <button
-                            class="like-btn flex items-center {{ $post->likes->contains(auth()->user()) ? 'text-red-500' : 'text-gray-600' }}"
-                            data-post-id="{{ $post->id }}"
-                            data-liked="{{ $post->likes->contains(auth()->user()) ? 'true' : 'false' }}">
-                            <i data-feather="heart" class="mr-1"></i>
-                            <span>Like</span>
-                        </button>
-
-                        <button class="comment-toggle flex items-center text-gray-600">
-                            <i data-feather="message-circle" class="mr-1"></i><span>Comment</span>
-                        </button>
+                <!-- Post Actions -->
+                <div class="p-3">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <button
+                                class="like-btn {{ $post->likes->contains(auth()->user()) ? 'text-red-500' : 'text-black' }}"
+                                data-post-id="{{ $post->id }}"
+                                data-liked="{{ $post->likes->contains(auth()->user()) ? 'true' : 'false' }}">
+                                <i data-feather="{{ $post->likes->contains(auth()->user()) ? 'heart' : 'heart' }}"
+                                    class="w-6 h-6 {{ $post->likes->contains(auth()->user()) ? 'fill-current' : '' }}"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="text-gray-600 text-sm">Share</button>
+
+                    <!-- Likes count - Updated to use actual count -->
+                    <div class="mt-2">
+                        <p class="font-semibold text-sm">{{ $post->likes->count() }} suka</p>
                     </div>
-                </div>
 
-                <div class="mt-3">
-                    <p class="font-semibold">{{ $post->user->name }}</p>
-                    <p class="text-gray-700">{{ $post->content }}</p>
-                </div>
+                    <!-- Caption -->
+                    <div class="mt-1">
+                        <p class="text-sm">
+                            <span class="font-semibold">{{ $post->user->name }}</span>
+                            {{ $post->content }}
+                        </p>
+                    </div>
 
-                <!-- Comment Section -->
-                <div class="comment-section hidden mt-4 transition-all duration-300">
-                    <div class="comments-list mb-4">
-                        @foreach ($post->comments as $comment)
-                            <div class="p-2 border-b text-sm text-gray-800">
-                                <strong>{{ $comment->user->name }}</strong> {{ $comment->content }}
-                            </div>
+                    <!-- View all comments -->
+                    <div class="mt-1">
+                        <button class="text-gray-500 text-sm">Lihat semua {{ count($post->comments) }} komentar</button>
+                    </div>
+
+                    <!-- Comments preview -->
+                    <div class="mt-1 comments-preview">
+                        @foreach ($post->comments->take(2) as $comment)
+                            <p class="text-sm">
+                                <span class="font-semibold">{{ $comment->user->name }}</span>
+                                {{ $comment->content }}
+                            </p>
                         @endforeach
                     </div>
-                    <textarea class="w-full p-2 border rounded mb-2 comment-text" placeholder="Write a comment..."></textarea>
-                    <button class="post-comment-btn bg-blue-500 text-white px-4 py-2 rounded"
-                        data-post-id="{{ $post->id }}">Post Comment</button>
+
+                    <!-- Post time -->
+                    <div class="mt-1">
+                        <p class="text-gray-400 text-xs uppercase">{{ $post->created_at->diffForHumans() }}</p>
+                    </div>
+                </div>
+
+                <!-- Comment Input -->
+                <div class="flex items-center border-t border-gray-200 p-3">
+                    <button class="mr-3">
+                        <i data-feather="smile" class="w-6 h-6 text-gray-500"></i>
+                    </button>
+                    <input type="text" class="comment-text flex-grow bg-transparent outline-none text-sm"
+                        placeholder="Tambahkan komentar...">
+                    <button
+                        class="post-comment-btn ml-2 font-semibold text-blue-500 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        data-post-id="{{ $post->id }}" disabled>
+                        Kirim
+                    </button>
                 </div>
             </div>
         @endforeach
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script>
+        // Initialize feather icons
         feather.replace();
 
+        // Enable or disable comment button based on input
+        document.querySelectorAll('.comment-text').forEach(input => {
+            input.addEventListener('input', function() {
+                const postCard = this.closest('.bg-white');
+                const commentBtn = postCard.querySelector('.post-comment-btn');
+
+                if (this.value.trim() !== '') {
+                    commentBtn.removeAttribute('disabled');
+                } else {
+                    commentBtn.setAttribute('disabled', 'disabled');
+                }
+            });
+        });
+
+        // Like button functionality
         document.querySelectorAll('.like-btn').forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
 
                 const postId = this.getAttribute('data-post-id');
-                const icon = this.querySelector('i');
+                const icon = this.querySelector('svg'); // Ganti ke svg
+                const likesCountElement = this.closest('.p-3').querySelector('.font-semibold.text-sm');
 
-                console.log(`Sending like request for post ID: ${postId}`);
+                if (!icon) {
+                    console.error('Icon not found in button!');
+                    return;
+                }
 
                 fetch(`/posts/${postId}/like`, {
                         method: 'POST',
@@ -101,61 +148,47 @@
                         credentials: 'same-origin'
                     })
                     .then(response => {
-                        console.log('Response received:', response);
-                        console.log('Status code:', response.status);
-
                         if (!response.ok) {
                             throw new Error(`Server responded with status ${response.status}`);
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Response data:', data);
-
                         if (data.liked) {
                             button.classList.add('text-red-500');
                             button.setAttribute('data-liked', 'true');
+                            icon.classList.add('fill-current');
                         } else {
                             button.classList.remove('text-red-500');
                             button.setAttribute('data-liked', 'false');
+                            icon.classList.remove('fill-current');
                         }
 
-                        // Add pop animation only if icon exists
-                        if (icon) {
-                            icon.classList.add('pop-animation');
-                            setTimeout(() => {
-                                icon.classList.remove('pop-animation');
-                            }, 400);
-                        }
+                        likesCountElement.textContent = `${data.likesCount} suka`;
+
+                        // Pop animation
+                        icon.classList.add('pop-animation');
+                        setTimeout(() => {
+                            icon.classList.remove('pop-animation');
+                        }, 400);
                     })
                     .catch(error => {
                         console.error('Error liking post:', error);
-                        // Only show alert for errors that aren't related to missing UI elements
-                        if (!(error instanceof TypeError)) {
-                            alert('Failed to like/unlike the post.');
-                        }
+                        alert('Gagal menyukai postingan.');
                     });
             });
         });
 
-        document.querySelectorAll('.comment-toggle').forEach(button => {
-            button.addEventListener('click', function() {
-                const postCard = this.closest('.bg-white');
-                const commentSection = postCard.querySelector('.comment-section');
-                commentSection.classList.toggle('hidden');
-            });
-        });
-
+        // Comment posting functionality
         document.querySelectorAll('.post-comment-btn').forEach(button => {
             button.addEventListener('click', function() {
                 const postId = this.getAttribute('data-post-id');
                 const postCard = this.closest('.bg-white');
                 const commentTextArea = postCard.querySelector('.comment-text');
                 const commentText = commentTextArea.value.trim();
-                const commentsList = postCard.querySelector('.comments-list');
+                const commentsPreview = postCard.querySelector('.comments-preview');
 
-                if (commentText === '') {
-                    alert('Please write a comment first.');
+                if (commentText === '' || !commentsPreview) {
                     return;
                 }
 
@@ -172,24 +205,35 @@
                     .then(response => response.json())
                     .then(data => {
                         commentTextArea.value = '';
+                        button.setAttribute('disabled', 'disabled');
 
-                        const newComment = document.createElement('div');
-                        newComment.classList.add(
-                            'p-2', 'border-b', 'text-sm', 'text-gray-800',
-                            'opacity-0', 'transition-opacity', 'duration-500', 'ease-in-out'
-                        );
+                        // Create and add the new comment to the comments preview
+                        const newComment = document.createElement('p');
+                        newComment.classList.add('text-sm');
                         newComment.innerHTML =
-                            `<strong>${data.comment.user}</strong> ${data.comment.content}`;
-                        commentsList.prepend(newComment);
+                            `<span class="font-semibold">${data.comment.user}</span> ${data.comment.content}`;
 
-                        setTimeout(() => {
-                            newComment.classList.remove('opacity-0');
-                            newComment.classList.add('opacity-100');
-                        }, 10);
+                        // Add to the beginning of comments list
+                        if (commentsPreview.firstChild) {
+                            commentsPreview.insertBefore(newComment, commentsPreview.firstChild);
+                        } else {
+                            commentsPreview.appendChild(newComment);
+                        }
+
+                        // Update comment count if it exists
+                        const commentCountEl = postCard.querySelector('button.text-gray-500.text-sm');
+                        if (commentCountEl) {
+                            const currentText = commentCountEl.textContent;
+                            const match = currentText.match(/Lihat semua (\d+) komentar/);
+                            if (match) {
+                                const newCount = parseInt(match[1]) + 1;
+                                commentCountEl.textContent = `Lihat semua ${newCount} komentar`;
+                            }
+                        }
                     })
                     .catch(error => {
                         console.error('Error posting comment:', error);
-                        alert('Failed to post comment.');
+                        alert('Failed to post comment. Please try again.');
                     });
             });
         });

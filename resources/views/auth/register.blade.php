@@ -1,7 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
-    <div class="flex items-center justify-center h-screen bg-gray-100">
+    <div class="flex items-center justify-center">
         <div class="bg-white p-8 rounded shadow-md w-96">
             <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
 

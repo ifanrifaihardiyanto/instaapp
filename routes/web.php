@@ -49,8 +49,7 @@ Route::middleware(['auth'])->group(function () {
     // Create Post
     Route::get('/post/create', [PostController::class, 'create'])->name('post.create');
     // Like or Unlike
-    Route::post('/posts/{post}/like', [LikeController::class, 'like'])->name('posts.like');
-    Route::post('/posts/{post}/unlike', [LikeController::class, 'unlike'])->name('posts.unlike');
+    Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
     // Comment
     Route::post('posts/{post}/comment', [CommentController::class, 'store'])->name('posts.comment');
     // Profile
