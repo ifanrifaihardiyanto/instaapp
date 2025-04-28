@@ -21,7 +21,7 @@
         }
     </style>
 
-    <div class="max-w-xl mx-auto">
+    <div class="max-w-xl mx-auto py-8 px-4">
         <!-- Posts Feed -->
         @foreach ($posts as $post)
             <!-- Modal for Comments -->
